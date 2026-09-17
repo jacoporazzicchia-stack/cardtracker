@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CardTrack">
+<title>CardTrack</title>
+<style>
+:root {
+    --bg: #0b0b0f;
+    --card: #15151b;
+    --card2: #1c1c23;
+    --text: #ffffff;
+    --secondary: #a5a5ad;
+    --accent: #ffffff;
+    --green: #39d98a;
+    --red: #ff5c5c;
+    --border: rgba(255,255,255,0.08);
+}
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                 "SF Pro Text", Arial, sans-serif;
+}
+button,
+input,
+select {
+    font: inherit;
+}
+button {
+    cursor: pointer;
+}
+.app {
+    width: 100%;
+    min-height: 100vh;
+    padding-bottom: 90px;
+}
+/* HEADER */
+.header {
+    padding: calc(env(safe-area-inset-top) + 20px) 20px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+.subtitle {
+    color: var(--secondary);
+    font-size: 13px;
+    margin-top: 3px;
+}
+.refresh {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: white;
+    font-size: 20px;
+}
+/* CONTENT */
+.content {
+    padding: 0 16px;
+}
+.section-title {
+    font-size: 20px;
+    font-weight: 750;
+    margin: 14px 4px;
+}
+/* SEARCH */
+.search {
+    background: var(--card);
+    border: 1px solid var(--border);
+    height: 48px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    margin-bottom: 18px;
+}
+.search span {
+    font-size: 18px;
+    margin-right: 9px;
+}
+.search input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    width: 100%;
+    font-size: 16px;
+}
+.search input::placeholder {
+    color: #777780;
+}
+/* CARDS */
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    gap: 14px;
+    position: relative;
+}
+.card-image {
+    width: 72px;
+    height: 100px;
+    border-radius: 9px;
+    object-fit: cover;
+    background: #25252d;
+    flex-shrink: 0;
+}
+.card-info {
+    flex: 1;
+    min-width: 0;
+}
+.card-name {
+    font-weight: 750;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+.card-set {
+    color: var(--secondary);
+    font-size: 12px;
+    margin-bottom: 9px;
+}
+.tags {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+.tag {
+    background: var(--card2);
+    border-radius: 7px;
+    padding: 4px 7px;
+    font-size: 10px;
+    color: #cfcfd4;
+}
+.price {
+    margin-top: 11px;
+    font-size: 22px;
+    font-weight: 800;
+}
+.change {
+    font-size: 12px;
+    margin-top: 2px;
+}
+.up {
+    color: var(--green);
+}
+.down {
+    color: var(--red);
+}
+.card-menu {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+.card-menu button {
+    border: none;
+    background: transparent;
+    color: #777780;
+    font-size: 20px;
+}
+/* EMPTY */
+.empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--secondary);
+}
+.empty-icon {
+    font-size: 50px;
+    margin-bottom: 15px;
+}
+.empty h3 {
+    color: white;
+    margin: 0 0 7px;
+}
+/* ADD BUTTON */
+.add-button {
+    position: fixed;
+    right: 18px;
+    bottom: calc(75px + env(safe-area-inset-bottom));
+    width: 58px;
+    height: 58px;
+    border-radius: 20px;
+    border: none;
+    background: white;
+    color: black;
+    font-size: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+}
+/* NAVIGATION */
+.nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(65px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(12,12,16,.94);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    z-index: 10;
+}
+.nav button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: #73737c;
+    font-size: 11px;
+}
+.nav button.active {
+    color: white;
+}
+.nav-icon {
+    font-size: 21px;
+    display: block;
+    margin-bottom: 3px;
+}
+/* MODAL */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: flex-end;
+    z-index: 100;
+}
+.overlay.show {
+    display: flex;
+}
+.sheet {
+    background: #15151b;
+    width: 100%;
+    border-radius: 28px 28px 0 0;
+    padding: 22px 18px calc(25px + env(safe-area-inset-bottom));
+    max-height: 92vh;
+    overflow-y: auto;
+}
+.sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.sheet-title {
+    font-size: 24px;
+    font-weight: 800;
+}
+.close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #25252d;
+    color: white;
+    font-size: 20px;
+}
+/* FORM */
+label {
+    display: block;
+    color: #a7a7af;
+    font-size: 12px;
+    margin: 15px 3px 7px;
+}
+input,
+select {
+    width: 100%;
+    height: 50px;
+    background: #202027;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: white;
+    padding: 0 14px;
+    outline: none;
+}
+input:focus,
+select:focus {
+    border-color: rgba(255,255,255,.3);
+}
+.save {
+    margin-top: 22px;
+    width: 100%;
+    height: 53px;
+    border: none;
+    border-radius: 16px;
+    background: white;
+    color: black;
+    font-weight: 750;
+}
+.delete {
+    margin-top: 10px;
+    width: 100%;
+    height: 48px;
+    border: 1px solid rgba(255,92,92,.3);
+    border-radius: 14px;
+    background: transparent;
+    color: var(--red);
+}
+/* SETTINGS */
+.settings {
+    display: none;
+}
+.setting {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 17px;
+    border-radius: 17px;
+    margin-bottom: 10px;
+}
+.setting-title {
+    font-weight: 700;
+}
+.setting-description {
+    color: var(--secondary);
+    font-size: 12px;
+    margin-top: 4px;
+}
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 12px;
+    color: var(--secondary);
+    font-size: 12px;
+}
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+}
+/* DETAIL */
+.detail {
+    display: none;
+}
+.back {
+    border: none;
+    background: transparent;
+    color: white;
+    padding: 0;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+.detail-top {
+    display: flex;
+    gap: 18px;
+}
+.detail-image {
+    width: 120px;
+    height: 168px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+.detail-name {
+    font-size: 23px;
+    font-weight: 800;
+}
+.detail-price {
+    font-size: 34px;
+    font-weight: 850;
+    margin-top: 20px;
+}
+.chart {
+    margin-top: 25px;
+    height: 190px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+}
+.chart svg {
+    width: 100%;
+    height: 100%;
+}
+.history {
+    margin-top: 15px;
+}
+.history-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 13px 4px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+.hidden {
+    display: none !important;
+}
+@media (min-width: 700px) {
+    .content,
+    .header {
+        max-width: 700px;
+        margin: auto;
+    }
+    .nav {
+        max-width: 700px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .add-button {
+        right: calc(50% - 330px);
+    }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="header">
+    <div>
+        <div class="logo">CardTrack</div>
+        <div class="subtitle">Il tuo tracker Pokémon</div>
+    </div>
+    <button class="refresh" onclick="refreshPrices()">↻</button>
+</header>
+<main class="content">
+    <!-- HOME -->
+    <section id="homePage">
+        <div class="search">
+            <span>⌕</span>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Cerca nelle tue carte..."
+                oninput="renderCards()"
+            >
+        </div>
+        <div class="section-title">Le mie carte</div>
+        <div id="cardsContainer" class="cards"></div>
+    </section>
+    <!-- DETAIL -->
+    <section id="detailPage" class="detail">
+        <button class="back" onclick="showHome()">‹ Indietro</button>
+        <div id="detailContent"></div>
+    </section>
+    <!-- SETTINGS -->
+    <section id="settingsPage" class="settings">
+        <div class="section-title">Impostazioni</div>
+        <div class="setting">
+            <div class="setting-title">Fonte prezzi</div>
+            <div class="setting-description">
+                Fonte utilizzata per recuperare i prezzi delle carte.
+            </div>
+            <div class="status">
+                <span class="dot"></span>
+                Cardmarket
+            </div>
+        </div>
+        <div class="setting">
+            <div class="setting-title">Aggiornamento</div>
+            <div class="setting-description">
+                I prezzi vengono aggiornati quando apri l'app o premi ↻.
+            </div>
+        </div>
+        <div class="setting">
+            <div class="setting-title">Carte monitorate</div>
+            <div class="setting-description" id="cardCount">
+                0 carte
+            </div>
+        </div>
+        <button class="delete" onclick="deleteAllCards()">
+            Elimina tutte le carte
+        </button>
+    </section>
+</main>
+<button class="add-button" onclick="openAdd()">+</button>
+<nav class="nav">
+    <button id="homeNav" class="active" onclick="showHome()">
+        <span class="nav-icon">⌂</span>
+        Home
+    </button>
+    <button id="settingsNav" onclick="showSettings()">
+        <span class="nav-icon">⚙</span>
+        Impostazioni
+    </button>
+</nav>
+</div>
+<!-- ADD / EDIT MODAL -->
+<div id="overlay" class="overlay">
+    <div class="sheet">
+        <div class="sheet-header">
+            <div class="sheet-title" id="formTitle">
+                Aggiungi carta
+            </div>
+            <button class="close" onclick="closeModal()">×</button>
+        </div>
+        <input type="hidden" id="editId">
+        <label>Nome carta</label>
+        <input
+            id="cardName"
+            type="text"
+            placeholder="Es. Charizard ex"
+        >
+        <label>Espansione</label>
+        <input
+            id="cardSet"
+            type="text"
+            placeholder="Es. Destino di Paldea"
+        >
+        <label>Numero carta</label>
+        <input
+            id="cardNumber"
+            type="text"
+            placeholder="Es. 125/193"
+        >
+        <label>Lingua</label>
+        <select id="cardLanguage">
+            <option value="Italian">Italiano</option>
+            <option value="English">Inglese</option>
+            <option value="German">Tedesco</option>
+            <option value="French">Francese</option>
+            <option value="Spanish">Spagnolo</option>
+            <option value="Japanese">Giapponese</option>
+            <option value="Korean">Coreano</option>
+        </select>
+        <label>Condizione</label>
+        <select id="cardCondition">
+            <option value="NM">Near Mint (NM)</option>
+            <option value="EX">Excellent (EX)</option>
+            <option value="GD">Good (GD)</option>
+            <option value="LP">Light Played (LP)</option>
+            <option value="PL">Played (PL)</option>
+            <option value="PO">Poor (PO)</option>
+        </select>
+        <label>Prezzo iniziale (€)</label>
+        <input
+            id="cardPrice"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+        >
+        <label>URL immagine carta (facoltativo)</label>
+        <input
+            id="cardImage"
+            type="url"
+            placeholder="https://..."
+        >
+        <button class="save" onclick="saveCard()">
+            Salva carta
+        </button>
+        <button
+            id="deleteButton"
+            class="delete hidden"
+            onclick="deleteCard()"
+        >
+            Elimina carta
+        </button>
+    </div>
+</div>
+<script>
+/*
+====================================================
+CARDTRACK
+Sistema locale di monitoraggio carte
+====================================================
+*/
+const STORAGE_KEY = "cardtrack_cards";
+let cards = JSON.parse(
+    localStorage.getItem(STORAGE_KEY) || "[]"
+);
+let selectedCard = null;
+/* =========================
+   STORAGE
+========================= */
+function saveStorage() {
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(cards)
+    );
+}
+/* =========================
+   HOME
+========================= */
+function showHome() {
+    document.getElementById("homePage").style.display = "block";
+    document.getElementById("detailPage").style.display = "none";
+    document.getElementById("settingsPage").style.display = "none";
+    document.getElementById("homeNav").classList.add("active");
+    document.getElementById("settingsNav").classList.remove("active");
+    document.querySelector(".add-button").style.display = "block";
+    renderCards();
+}
+function showSettings() {
+    document.getElementById("homePage").style.display = "none";
+    document.getElementById("detailPage").style.display = "none";
+    document.getElementById("settingsPage").style.display = "block";
+    document.getElementById("homeNav").classList.remove("active");
+    document.getElementById("settingsNav").classList.add("active");
+    document.querySelector(".add-button").style.display = "none";
+    document.getElementById("cardCount").innerText =
+        cards.length +
+        (cards.length === 1 ? " carta" : " carte");
+}
+/* =========================
+   RENDER CARDS
+========================= */
+function renderCards() {
+    const container =
+        document.getElementById("cardsContainer");
+    const query =
+        document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+    let filtered = cards.filter(card => {
+        return (
+            card.name.toLowerCase().includes(query) ||
+            card.set.toLowerCase().includes(query)
+        );
+    });
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">🃏</div>
+                <h3>
+                    ${cards.length === 0
+                        ? "Nessuna carta"
+                        : "Nessun risultato"}
+                </h3>
+                <div>
+                    ${cards.length === 0
+                        ? "Premi + per iniziare a monitorare una carta."
+                        : "Prova un'altra ricerca."}
+                </div>
+            </div>
+        `;
+        return;
+    }
+    container.innerHTML = filtered.map(card => {
+        const change =
+            card.previousPrice !== undefined &&
+            card.previousPrice !== null
+                ? card.price - card.previousPrice
+                : 0;
+        const changeClass =
+            change > 0
+                ? "up"
+                : change < 0
+                    ? "down"
+                    : "";
+        const changeText =
+            change > 0
+                ? "+" + change.toFixed(2) + " €"
+                : change < 0
+                    ? change.toFixed(2) + " €"
+                    : "Nessuna variazione";
+        return `
+        <div class="card" onclick="openDetail('${card.id}')">
+            <img
+                class="card-image"
+                src="${card.image || placeholderImage()}"
+                onerror="this.src='${placeholderImage()}'"
+            >
+            <div class="card-info">
+                <div class="card-name">
+                    ${escapeHTML(card.name)}
+                </div>
+                <div class="card-set">
+                    ${escapeHTML(card.set)}
+                    ${card.number ? " • " + escapeHTML(card.number) : ""}
+                </div>
+                <div class="tags">
+                    <span class="tag">
+                        ${languageName(card.language)}
+                    </span>
+                    <span class="tag">
+                        ${card.condition}
+                    </span>
+                </div>
+                <div class="price">
+                    €${Number(card.price).toFixed(2)}
+                </div>
+                <div class="change ${changeClass}">
+                    ${changeText}
+                </div>
+            </div>
+            <div class="card-menu">
+                <button
+                    onclick="event.stopPropagation(); editCard('${card.id}')"
+                >
+                    ⋯
+                </button>
+            </div>
+        </div>
+        `;
+    }).join("");
+}
+/* =========================
+   ADD CARD
+========================= */
+function openAdd() {
+    document.getElementById("formTitle").innerText =
+        "Aggiungi carta";
+    document.getElementById("editId").value = "";
+    document.getElementById("cardName").value = "";
+    document.getElementById("cardSet").value = "";
+    document.getElementById("cardNumber").value = "";
+    document.getElementById("cardLanguage").value = "Italian";
+    document.getElementById("cardCondition").value = "NM";
+    document.getElementById("cardPrice").value = "";
+    document.getElementById("cardImage").value = "";
+    document
+        .getElementById("deleteButton")
+        .classList.add("hidden");
+    document
+        .getElementById("overlay")
+        .classList.add("show");
+}
+/* =========================
+   EDIT CARD
+========================= */
+function editCard(id) {
+    const card = cards.find(c => c.id === id);
+    if (!card) return;
+    document.getElementById("formTitle").innerText =
+        "Modifica carta";
+    document.getElementById("editId").value = id;
+    document.getElementById("cardName").value =
+        card.name;
+    document.getElementById("cardSet").value =
+        card.set;
+    document.getElementById("cardNumber").value =
+        card.number || "";
+    document.getElementById("cardLanguage").value =
+        card.language;
+    document.getElementById("cardCondition").value =
+        card.condition;
+    document.getElementById("cardPrice").value =
+        card.price;
+    document.getElementById("cardImage").value =
+        card.image || "";
+    document
+        .getElementById("deleteButton")
+        .classList.remove("hidden");
+    document
+        .getElementById("overlay")
+        .classList.add("show");
+}
+/* =========================
+   SAVE CARD
+========================= */
+function saveCard() {
+    const name =
+        document.getElementById("cardName").value.trim();
+    const set =
+        document.getElementById("cardSet").value.trim();
+    const number =
+        document.getElementById("cardNumber").value.trim();
+    const language =
+        document.getElementById("cardLanguage").value;
+    const condition =
+        document.getElementById("cardCondition").value;
+    const price =
+        Number(document.getElementById("cardPrice").value);
+    const image =
+        document.getElementById("cardImage").value.trim();
+    const editId =
+        document.getElementById("editId").value;
+    if (!name) {
+        alert("Inserisci il nome della carta.");
+        return;
+    }
+    if (isNaN(price) || price < 0) {
+        alert("Inserisci un prezzo valido.");
+        return;
+    }
+    if (editId) {
+        const card =
+            cards.find(c => c.id === editId);
+        if (card) {
+            if (card.price !== price) {
+                card.previousPrice =
+                    card.price;
+                card.history =
+                    card.history || [];
+                card.history.push({
+                    date: new Date().toISOString(),
+                    price: price
+                });
+            }
+            card.name = name;
+            card.set = set;
+            card.number = number;
+            card.language = language;
+            card.condition = condition;
+            card.price = price;
+            card.image = image;
+        }
+    } else {
+        cards.push({
+            id:
+                Date.now().toString(),
+            name,
+            set,
+            number,
+            language,
+            condition,
+            price,
+            previousPrice: null,
+            image,
+            created:
+                new Date().toISOString(),
+            updated:
+                new Date().toISOString(),
+            history: [
+                {
+                    date:
+                        new Date().toISOString(),
+                    price
+                }
+            ]
+        });
+    }
+    saveStorage();
+    closeModal();
+    renderCards();
+}
+/* =========================
+   DELETE
+========================= */
+function deleteCard() {
+    const id =
+        document.getElementById("editId").value;
+    if (!id) return;
+    if (!confirm("Eliminare questa carta?")) {
+        return;
+    }
+    cards =
+        cards.filter(card => card.id !== id);
+    saveStorage();
+    closeModal();
+    renderCards();
+}
+function deleteAllCards() {
+    if (cards.length === 0) return;
+    if (!confirm(
+        "Vuoi eliminare tutte le carte monitorate?"
+    )) {
+        return;
+    }
+    cards = [];
+    saveStorage();
+    renderCards();
+    showSettings();
+}
+/* =========================
+   MODAL
+========================= */
+function closeModal() {
+    document
+        .getElementById("overlay")
+        .classList.remove("show");
+}
+/* =========================
+   DETAIL
+========================= */
+function openDetail(id) {
+    selectedCard =
+        cards.find(card => card.id === id);
+    if (!selectedCard) return;
+    document.getElementById("homePage").style.display =
+        "none";
+    document.getElementById("settingsPage").style.display =
+        "none";
+    document.getElementById("detailPage").style.display =
+        "block";
+    document.querySelector(".add-button").style.display =
+        "none";
+    document.getElementById("homeNav")
+        .classList.remove("active");
+    document.getElementById("settingsNav")
+        .classList.remove("active");
+    renderDetail();
+}
+function renderDetail() {
+    const card = selectedCard;
+    const history =
+        card.history || [];
+    let historyHTML = "";
+    [...history]
+        .reverse()
+        .forEach(item => {
+            const date =
+                new Date(item.date)
+                .toLocaleDateString("it-IT");
+            historyHTML += `
+                <div class="history-row">
+                    <span>${date}</span>
+                    <strong>
+                        €${Number(item.price).toFixed(2)}
+                    </strong>
+                </div>
+            `;
+        });
+    document.getElementById("detailContent").innerHTML = `
+        <div class="detail-top">
+            <img
+                class="detail-image"
+                src="${card.image || placeholderImage()}"
+                onerror="this.src='${placeholderImage()}'"
+            >
+            <div>
+                <div class="detail-name">
+                    ${escapeHTML(card.name)}
+                </div>
+                <div class="card-set">
+                    ${escapeHTML(card.set)}
+                    ${card.number
+                        ? " • " + escapeHTML(card.number)
+                        : ""}
+                </div>
+                <div class="tags">
+                    <span class="tag">
+                        ${languageName(card.language)}
+                    </span>
+                    <span class="tag">
+                        ${card.condition}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="detail-price">
+            €${Number(card.price).toFixed(2)}
+        </div>
+        <div class="card-set">
+            Ultimo prezzo registrato
+        </div>
+        <div class="chart">
+            ${createChart(card)}
+        </div>
+        <div class="section-title">
+            Storico prezzi
+        </div>
+        <div class="history">
+            ${historyHTML || "Nessuno storico disponibile."}
+        </div>
+    `;
+}
+/* =========================
+   CHART
+========================= */
+function createChart(card) {
+    const history =
+        card.history || [];
+    if (history.length < 2) {
+        return `
+            <div style="
+                display:flex;
+                height:100%;
+                align-items:center;
+                justify-content:center;
+                color:#777780;
+                font-size:13px;
+            ">
+                Servono almeno 2 prezzi per creare il grafico.
+            </div>
+        `;
+    }
+    const values =
+        history.map(x => Number(x.price));
+    const min =
+        Math.min(...values);
+    const max =
+        Math.max(...values);
+    const range =
+        max - min || 1;
+    const points =
+        values.map((value, index) => {
+            const x =
+                (index / (values.length - 1)) * 100;
+            const y =
+                95 -
+                ((value - min) / range) * 80;
+            return `${x},${y}`;
+        }).join(" ");
+    return `
+        <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+        >
+            <polyline
+                points="${points}"
+                fill="none"
+                stroke="white"
+                stroke-width="1.8"
+                vector-effect="non-scaling-stroke"
+            />
+        </svg>
+    `;
+}
+/* =========================
+   REFRESH
+========================= */
+function refreshPrices() {
+    /*
+    ====================================================
+    QUI VERRÀ COLLEGATA L'API CARDMARKET.
+    Per ora simuliamo l'aggiornamento mantenendo
+    il prezzo esistente.
+    ====================================================
+    */
+    if (cards.length === 0) {
+        alert("Non hai ancora aggiunto carte.");
+        return;
+    }
+    alert(
+        "Aggiornamento richiesto.\n\n" +
+        "Il collegamento automatico a Cardmarket " +
+        "verrà effettuato tramite API/backend."
+    );
+}
+/* =========================
+   HELPERS
+========================= */
+function languageName(language) {
+    const languages = {
+        Italian: "🇮🇹 IT",
+        English: "🇬🇧 EN",
+        German: "🇩🇪 DE",
+        French: "🇫🇷 FR",
+        Spanish: "🇪🇸 ES",
+        Japanese: "🇯🇵 JP",
+        Korean: "🇰🇷 KR"
+    };
+    return languages[language] || language;
+}
+function placeholderImage() {
+    return "data:image/svg+xml," +
+        encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="300"
+             height="420">
+            <rect width="100%"
+                  height="100%"
+                  fill="#25252d"/>
+            <text
+                x="50%"
+                y="50%"
+                fill="#777780"
+                font-size="24"
+                text-anchor="middle"
+                dominant-baseline="middle">
+                CARD
+            </text>
+        </svg>
+        `);
+}
+function escapeHTML(text) {
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+/* =========================
+   START
+========================= */
+renderCards();
+</script>
+</body>
+</html>
